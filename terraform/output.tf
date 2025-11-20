@@ -8,11 +8,6 @@ output "alb_dns_name" {
   description = "The DNS name of the Application Load Balancer"
 }
 
-output "waf_web_acl_arn" {
-  value       = aws_wafv2_web_acl.main_acl.arn
-  description = "The ARN of the Web ACL associated with the ALB"
-}
-
 output "security_group_id" {
   value       = aws_security_group.alb_sg.id
   description = "The ID of the security group attached to the ALB"
@@ -53,4 +48,8 @@ output "website_url" {
 
 output "cloudfront_domain" {
   value = aws_cloudfront_distribution.s3_distribution.domain_name
+}
+
+output "route53_name_servers" {
+  value = aws_route53_zone.main.name_servers
 }
