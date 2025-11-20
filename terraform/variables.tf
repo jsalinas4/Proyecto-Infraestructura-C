@@ -32,6 +32,26 @@ variable "ami_id" {
 }
 
 
+
+#alb 
+variable "alb_sg_ingress_rules" {
+  type    = any
+  default = {}
+}
+variable "alb_sg_egress_rules" {
+  type    = any
+  default = {}
+}
+#ec2
+variable "ec2_sg_ingress_rules" {
+  type    = any
+  default = {}
+}
+variable "ec2_sg_egress_rules" {
+  type    = any
+  default = {}
+}
+
 variable "domain_name" {
   type        = string
   description = "Domain name for SES verification"
