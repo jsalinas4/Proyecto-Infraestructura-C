@@ -52,6 +52,14 @@ variable "ec2_sg_egress_rules" {
   default = {}
 }
 
+#rds
+variable "rds_sg_ingress_rules" {
+  type = any
+}
+variable "rds_sg_egress_rules" {
+  type = any
+}
+
 variable "domain_name" {
   type        = string
   description = "Domain name for SES verification"
