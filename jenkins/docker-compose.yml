@@ -32,7 +32,7 @@ services:
     image: docker:dind
     privileged: true
     container_name: docker-agent
-    command: dockerd --host=tcp://0.0.0.0:50000 --tls=false --dns 8.8.8.8
+    command: dockerd --host=tcp://0.0.0.0:50000 --tls=false --dns 172.18.0.1
     networks:
       - jenkins-network
 
