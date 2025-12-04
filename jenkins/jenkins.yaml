@@ -38,11 +38,9 @@ jenkins:
               jnlp:
                 user: "jenkins"
             dockerTemplateBase:
-              image: chex19/agent-jenkins:latest
+              image: local-terraform-agent:latest
               dnsHosts:
                 - "8.8.8.8"
-              extraHosts:
-                - "jenkins-master:172.18.0.2"
 
 unclassified:
   location:

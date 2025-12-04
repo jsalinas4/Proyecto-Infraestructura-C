@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     gnupg \
-    software-properties-common \
     python3 \
     python3-pip \
     jq \
@@ -34,7 +33,6 @@ RUN curl -fsSL \
     | tar -xz -C /opt/ \
     && ln -s /opt/apache-maven-3.9.6 /opt/maven
 
-RUN pip install checkov --break-system-packages
 
 ENV MAVEN_HOME=/opt/maven
 ENV PATH="$MAVEN_HOME/bin:$PATH"
