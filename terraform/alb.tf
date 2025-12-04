@@ -1,5 +1,6 @@
 
 #Auto Scaling Group and Launch Template with IAM Role
+
 resource "aws_iam_role" "ssm_role" {
   name = "${var.env}-ec2-ssm-role"
 
@@ -149,6 +150,11 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_autoscaling_group" "app_asg" {
+  depends_on = [
+    aws_lb.app_alb,
+    aws_lb_target_group.app_tg
+  ]
+
   launch_template {
     id      = aws_launch_template.app.id
     version = aws_launch_template.app.latest_version

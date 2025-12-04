@@ -1,13 +1,13 @@
-resource "aws_route53_zone" "main" {
-  name = "cloudtest.space"
+data "aws_route53_zone" "main" {
+  name = var.domain_name
 }
 
 resource "aws_acm_certificate" "cloudfront_cert" {
   provider          = aws.us-east-1
-  domain_name       = "www.cloudtest.space"
+  domain_name       = "www.${var.domain_name}"
   validation_method = "DNS"
 
-  subject_alternative_names = ["*.cloudtest.space"]
+  subject_alternative_names = ["*.${var.domain_name}"]
 
   tags = {
     Environment = var.env
@@ -27,7 +27,7 @@ resource "aws_route53_record" "cert_validation" {
     }
   }
 
-  zone_id = aws_route53_zone.main.id
+  zone_id = data.aws_route53_zone.main.zone_id
   name    = each.value.name
   type    = each.value.type
   records = [each.value.record]
@@ -37,7 +37,11 @@ resource "aws_route53_record" "cert_validation" {
 resource "aws_acm_certificate_validation" "cloudfront_cert" {
   provider                = aws.us-east-1
   certificate_arn         = aws_acm_certificate.cloudfront_cert.arn
-  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]  # Changed from fqld to fqdn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+
+  timeouts {
+    create = "45m"
+  }
 }
 
 resource "aws_acm_certificate" "alb_cert" {
@@ -60,7 +64,7 @@ resource "aws_route53_record" "alb_cert_validation" {
     }
   }
 
-  zone_id = aws_route53_zone.main.zone_id
+  zone_id = data.aws_route53_zone.main.zone_id
   name    = each.value.name
   type    = each.value.type
   ttl     = 60
@@ -70,4 +74,8 @@ resource "aws_route53_record" "alb_cert_validation" {
 resource "aws_acm_certificate_validation" "alb_cert_validation" {
   certificate_arn         = aws_acm_certificate.alb_cert.arn
   validation_record_fqdns = [for rec in aws_route53_record.alb_cert_validation : rec.fqdn]
+
+  timeouts {
+    create = "45m"
+  }
 }

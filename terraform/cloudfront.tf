@@ -27,8 +27,8 @@ resource "aws_s3_bucket_policy" "website" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid       = "AllowCloudFrontAccess"
-        Effect    = "Allow"
+        Sid    = "AllowCloudFrontAccess"
+        Effect = "Allow"
         Principal = {
           Service = "cloudfront.amazonaws.com"
         }
@@ -54,12 +54,31 @@ resource "aws_s3_bucket_public_access_block" "website" {
   restrict_public_buckets = true
 }
 
+# Upload index.html to S3
+resource "aws_s3_object" "index" {
+  bucket       = aws_s3_bucket.website.id
+  key          = "index.html"
+  source       = "website/index.html"
+  content_type = "text/html"
+  etag         = filemd5("website/index.html")
+}
+
+# Create a simple error.html page
+resource "aws_s3_object" "error" {
+  bucket       = aws_s3_bucket.website.id
+  key          = "error.html"
+  content      = "<html><body><h1>404 - Page Not Found</h1></body></html>"
+  content_type = "text/html"
+}
+
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
+  depends_on = [aws_acm_certificate_validation.cloudfront_cert]
+
   origin {
     domain_name              = aws_s3_bucket.website.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.default.id
-    origin_id               = "S3Origin"
+    origin_id                = "S3Origin"
   }
 
   enabled             = true
@@ -91,7 +110,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
-  
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
@@ -114,8 +133,8 @@ resource "aws_cloudfront_origin_access_control" "default" {
 
 
 resource "aws_route53_record" "website" {
-  zone_id = aws_route53_zone.main.zone_id
-  name    = "www.cloudtest.space"
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "www.${var.domain_name}"
   type    = "A"
 
   alias {
