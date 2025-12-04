@@ -1,0 +1,44 @@
+services:
+  jenkins-master:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    image: jenkins/jenkins:2.540-jdk21
+    user: root
+    container_name: jenkins-master
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true
+      - CASC_JENKINS_CONFIG=/var/jenkins_home/casc_configs/jenkins.yaml
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - ./jenkins.yaml:/var/jenkins_home/casc_configs/jenkins.yaml:ro
+      - ../:/var/jenkins_home/workspace/local-repo:ro
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/login || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jenkins-network
+
+  docker-agent:
+    image: docker:dind
+    privileged: true
+    container_name: docker-agent
+    command: dockerd --host=tcp://0.0.0.0:50000 --tls=false --dns 8.8.8.8
+    networks:
+      - jenkins-network
+
+networks:
+  jenkins-network:
+
+
+volumes:
+  jenkins_home:
