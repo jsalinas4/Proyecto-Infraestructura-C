@@ -51,3 +51,7 @@ jobs:
 
     - name: Terraform Plan
       run: terraform plan -var-file=staging.terraform.tfvars
+
+    - name: Terraform Apply
+      run: terraform apply -var-file=staging.terraform.tfvars
+      
