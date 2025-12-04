@@ -1,5 +1,5 @@
 provider "aws" {
-  region = var.region # This will be us-east-2
+  region = var.region
   # profile             = "joseph"
   allowed_account_ids = ["879381246410"]
   default_tags {
@@ -10,11 +10,11 @@ provider "aws" {
   }
 }
 
-# Add provider configuration for us-east-1 (required for CloudFront certificates)
+
 provider "aws" {
-  alias               = "us-east-1"
-  region              = "us-east-1"
-  profile             = "joseph"
+  alias  = "us-east-1"
+  region = "us-east-1"
+  # profile             = "joseph"
   allowed_account_ids = ["879381246410"]
   default_tags {
     tags = {
