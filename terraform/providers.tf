@@ -1,6 +1,6 @@
 provider "aws" {
-  region              = var.region # This will be us-east-2
-  profile             = "joseph"
+  region = var.region # This will be us-east-2
+  # profile             = "joseph"
   allowed_account_ids = ["879381246410"]
   default_tags {
     tags = {
