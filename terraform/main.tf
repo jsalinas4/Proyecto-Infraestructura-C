@@ -14,4 +14,13 @@ terraform {
       version = ">= 2.2.0"
     }
   }
+
+  backend "s3" {
+    bucket         = "proyecto-infraestructura-tfstate-staging" # Cambiar según tu env
+    key            = "terraform.tfstate"
+    region         = "us-east-2"                                      # Cambiar según tu región
+    dynamodb_table = "proyecto-infraestructura-tfstate-locks-staging" # Cambiar según tu env
+    encrypt        = true
+    profile        = "joseph"
+  }
 }

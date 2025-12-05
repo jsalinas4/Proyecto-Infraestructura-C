@@ -31,10 +31,14 @@ override.tf.json
 # !example_override.tf
 
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
-# example: *tfplan*
+*tfplan*
+*.out
+plan.out
 
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
 results.xml
 infraestructure-develop
+test_api_gateway.sh
+docs/

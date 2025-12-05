@@ -14,10 +14,18 @@ on:
         options:
         - plan
         - apply
+      environment:
+        description: 'Ambiente'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'Terraform ${{ github.event.inputs.action || ''plan'' }}'
     runs-on: ubuntu-latest
     
     defaults:
@@ -50,8 +58,15 @@ jobs:
       run: terraform validate
 
     - name: Terraform Plan
-      run: terraform plan -var-file=staging.terraform.tfvars -out=plan.out
+      run: |
+        ENV="${{ github.event.inputs.environment || 'staging' }}"
+        echo "Ejecutando plan para ambiente: $ENV"
+        terraform plan -var-file=${ENV}.terraform.tfvars -out=plan.out
 
-    #- name: Terraform Apply
-    #  run: terraform apply -var-file=staging.terraform.tfvars
+    - name: Terraform Apply
+      if: github.event.inputs.action == 'apply'
+      run: |
+        echo "Aplicando cambios de infraestructura"
+        terraform apply plan.out
+        echo "Infraestructura aplicada exitosamente"
 
