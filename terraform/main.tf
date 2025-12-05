@@ -21,6 +21,6 @@ terraform {
     region         = "us-east-2"                                      # Cambiar según tu región
     dynamodb_table = "proyecto-infraestructura-tfstate-locks-staging" # Cambiar según tu env
     encrypt        = true
-    profile        = "joseph"
+    # profile        = "joseph"
   }
 }
